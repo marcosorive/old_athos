@@ -1,5 +1,5 @@
 '''
-This paremeters can HIGHLY affect is amazon bans your IP from accessing their server.
+This paremeters can HIGHLY affect if amazon bans your IP from accessing their server.
 Please be very careful when editing this. Excesive requests will get you banned.
 '''
 
