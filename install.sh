@@ -1,11 +1,11 @@
 echo "Installing utils for the installation...."
-apt-get install -y curl unzip xvfb libxi6 libgconf-2-4 software-properties-common dirmngr
+apt-get -qq -y install curl unzip xvfb libxi6 libgconf-2-4 software-properties-common dirmngr
 echo "Done."
 echo "Installing Google Chrome..."
 curl -sS -o - https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key add -
 echo "deb [arch=amd64]  http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google-chrome.list
-apt-get -y update
-apt-get -y install google-chrome-stable
+apt-get -y -qq update
+apt-get -y -qq install google-chrome-stable
 echo "Done."
 
 echo "Installing chromedriver..."
@@ -22,16 +22,6 @@ add-apt-repository 'deb http://repo.mongodb.org/apt/debian stretch/mongodb-org/4
 apt -y update
 apt install mongodb-org
 echo "Done"
-
-echo "Starting Mongod..."
-systemctl start mongod
-systemctl enable mongod
-echo "Done."
-
-echo "Cleaning packages..."
-apt-get purge -y curl unzip xvfb libxi6 libgconf-2-4 software-properties-common dirmngr
-apt-get autoremove
-echo "Done."
 
 echo "Installing Python, pip  and dependencies"
 apt install -y python3.7
