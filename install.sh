@@ -19,13 +19,14 @@ echo "Done."
 echo "Installing Mongodb..."
 apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv 9DA31620334BD75D9DCB49F368818C72E52529D4
 add-apt-repository 'deb http://repo.mongodb.org/apt/debian stretch/mongodb-org/4.0 main'
-apt -y update
-apt install mongodb-org
+apt -qq -y update
+apt -qq install mongodb-org
 echo "Done"
 
 echo "Installing Python, pip  and dependencies"
-apt install -y python3.7
-apt-get install -y python3-pip
+apt -qq -y install python3.7
+apt -qq -y install python3-pip
 pip3 install --user pipenv
+echo export PATH="$PATH:/root/.local/bin"
 pipenv install
 echo "Done."
