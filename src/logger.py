@@ -1,10 +1,4 @@
 import logging
-from os.path import join, dirname
-from dotenv import load_dotenv
-
-def configure():
-    configure_env()
-    return configure_logger()
 
 def configure_logger():
     logger = logging.getLogger("bot_logger")
@@ -29,6 +23,4 @@ def configure_logger():
         print("There was a problem creating logger: " + e)
     return logger
 
-def configure_env():
-    dotenv_path = join(dirname(__file__), '.env')
-    load_dotenv(dotenv_path)
+logger = configure_logger()

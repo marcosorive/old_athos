@@ -5,17 +5,27 @@ from selenium.webdriver.chrome.options import Options
 CHROMEDRIVER_PATH = "C:/Users/Marcos/webdriver/chromedriver.exe"
 GOOGLE_CHROME_BIN = "C:/Program Files (x86)/Google/Chrome/Application/chrome.exe"
 
-def get_driver():
-    options = Options()
-    ua = UserAgent()
-    options.binary_location = GOOGLE_CHROME_BIN
-    options.add_argument('--disable-gpu')
-    options.add_argument('--no-sandbox')
-    options.add_argument("--log-level=3")
-    options.add_argument("user-agent=" + ua.random)
-    options.headless = True
+class Selenium:
 
-    return webdriver.Chrome(executable_path=CHROMEDRIVER_PATH , chrome_options=options)
+    def __init__(self):
+        self.ua = UserAgent()
+
+    def setup(self):
+        options = Options()
+        options.binary_location = GOOGLE_CHROME_BIN
+        options.add_argument('--disable-gpu')
+        options.add_argument('--no-sandbox')
+        options.add_argument("--log-level=3")
+        options.add_argument("user-agent=" + self.ua.random)
+        options.add_experimental_option("excludeSwitches", ["enable-automation"])
+        options.add_experimental_option('useAutomationExtension', False)
+        options.headless = True
+        self.driver = webdriver.Chrome(executable_path = CHROMEDRIVER_PATH , chrome_options = options)
+        self.driver.execute_script("Object.defineProperty(navigator, 'webdriver', {get: () => undefined})")
+        return self.driver
+
+    def dispose(self):
+        self.driver.quit()
 
 # def test_selenium():
 #     options = Options()

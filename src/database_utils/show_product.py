@@ -1,13 +1,21 @@
-from pymongo import MongoClient
+import sys
+import os
+from pathlib import Path
+path = Path(os.path.dirname(os.path.abspath(__file__)))
+sys.path.append(path.parent.__str__())
+import database
+from Product import Product
 
 try:
-    client = MongoClient('localhost', 27017)
-    db = client["amazonpricetracker"]
-    product = db.collection["product"]
+    database.Base.metadata.create_all(database.engine)
+    session = database.Session()
 
-    products = product.find()
+    products = session.query(Product).all()
     for i in products:
         print(i)
-    client.close()
+        print("-----------------")
 except Exception as e:
-    print("An error ocurred: " + e )
+    session.rollback()
+    print("An error ocurred: " + e.__str__ )
+finally:
+    session.close()

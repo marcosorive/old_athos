@@ -112,3 +112,5 @@ dmypy.json
 .vscode
 .env
 *.log
+*.sqlite
+*.test.*

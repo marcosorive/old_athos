@@ -1,60 +1,115 @@
-from pymongo import MongoClient
-from bson.objectid import ObjectId
+from sqlalchemy import Column, Integer, String, ForeignKey, Float
+import database
+from logger import logger
 
-class Product:
+'''
+Class that represents a Product. Used by SqlAchemy ORM.
+'''
+class Product(database.Base):
 
-    def __init__(self, logger):
-        self.logger = logger
-        self.client = MongoClient('localhost', 27017)
-        self.db = self.client["amazonpricetracker"]
-        self.product = self.db.collection["product"]
+    __tablename__ = 'product'
 
-    def add_product(self,amazon_id,current_price,name="",warning=0,delta=0):
-        self.logger.info("Adding product: " + amazon_id + name + warning + delta)
-        try:
-            return self.product.insert_one({
-                "name":name,
-                "amazon_id":amazon_id,
-                "warning":warning,
-                "delta":delta,
-                "lowest":current_price,
-                "current":current_price,
-            })
-        except Exception as e:
-            self.logger.error("Error adding product: " + str(e))
-            return None
-    
-    def delete_product(self,id):
-        self.logger.info("Deleting product with id: " +  str(id))
-        try:
-            return self.product.delete_one({
-                "_id" : ObjectId(id)
-            }).deleted_count
-        except Exception as e:
-            self.logger.error("Error deleting product: " + str(e))
-            return None
-    
-    def get_all_products(self):
-        self.logger.info("Getting all products")
-        try:
-            products = self.product.find({})
-            return products
-        except Exception as e:
-            self.logger.error("Error getting all products: " + str(e))
-            return None
- 
-    def update_current_price(self, id, price):
-        self.logger.info("Updating current price of product with id: " +  str(id) + ". New price is " + str(price))
-        try:
-            return self.product.update_one({"_id": ObjectId(id)},{"$set":{"current":price}}).modified_count
-        except Exception as e:
-            self.logger.error("Error updating current price: " + str(e))
-            return None
+    id = Column(Integer, primary_key=True)
+    name = Column(String)
+    url = Column(String)
+    store = Column(String)
+    current = Column(Float)
+    warning = Column(Float)
+    delta = Column(Float)
+    lowest = Column(Float)
 
-    def update_lowest_price(self,id,price):
-        self.logger.info("Updating lowest price of product with id:" +  str(id))
-        try:
-            return self.product.update_one({"_id": ObjectId(id)},{"$set":{"lowest":price}}).modified_count
-        except Exception as e:
-            self.logger.error("Error updating lowest price: " + str(e))
-            return None
+    '''
+    '''
+    def __init__(self, name, store, url, current_price, warning, delta):
+        self.name = name
+        self.store = store
+        self.url = url
+        self.current = current_price
+        self.warning = warning
+        self.delta = delta
+        self.lowest = current_price
+
+    def __str__(self):
+        result = f'- Name: {self.name} \n'
+        result = result +  f'- Internal ID: {self.id}\n'
+        result = result + f'- Store: {self.store}\n'
+        result = result + f'- Current price: {self.current}\n'
+        result = result + f'- Lowest price: {self.lowest}\n'
+        result = result + f'- Warning: {self.warning}\n'
+        result = result + f'- Delta: {self.delta}'
+        return result
+
+'''
+    Adds a product to the DB.
+'''
+def add_product(name, store, url, current_price, warning, delta):
+    session = database.Session()
+    try:
+        p = Product(name, store, url, current_price, warning, delta)
+        session.add(p)
+        session.commit()
+    except Exception as e:
+        logger.error(e)
+        session.rollback()
+        raise Exception(e.__str__)
+    finally:
+        session.close()
+
+'''
+    Returns all products from DB.
+'''
+def get_all_products():
+    session = database.Session()
+    try:
+        return session.query(Product).all()
+    except Exception as e:
+        logger.error(e)
+        session.rollback()
+        raise Exception(e.__str__)
+    finally:
+        session.close()
+
+'''
+    Deletes a product from DB.
+'''
+def delete_product(id):
+    session = database.Session()
+    try:
+        product = session.query(Product).filter(Product.id == id).first()
+        session.delete(product)
+        session.commit()
+    except Exception as e:
+        logger.error(e)
+        session.rollback()
+        raise Exception(e.__str__)
+    finally:
+        session.close()
+
+'''
+    Updates the lowest price in DB.
+'''
+def update_lowest_price(id, lowest_price):
+    session = database.Session()
+    try:
+        p = session.query(Product).filter(Product.id == id).first()
+        p.lowest = lowest_price
+        session.commit()
+    except Exception as e:
+        logger.error(e)
+        session.rollback()
+    finally:
+        session.close()
+'''
+    Updates the current price in the DB.
+'''
+def update_current_price(id, current_price):
+    session = database.Session()
+    try:
+        p = session.query(Product).filter(Product.id == id).first()
+        p.current = current_price
+        session.commit()
+    except Exception as e:
+        logger.error(e)
+        session.rollback()
+    finally:
+        session.close()

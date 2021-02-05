@@ -7,11 +7,11 @@ verify_ssl = true
 
 [packages]
 python-telegram-bot = "*"
-pymongo = "*"
 bcrypt = "*"
 python-dotenv = "*"
 fake-useragent = "*"
 selenium = "*"
+sqlalchemy = "*"
 
 [requires]
 python_version = "3.7"
