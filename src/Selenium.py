@@ -1,9 +1,10 @@
+import os
 from fake_useragent import UserAgent
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 
-CHROMEDRIVER_PATH = "C:/Users/Marcos/webdriver/chromedriver.exe"
-GOOGLE_CHROME_BIN = "C:/Program Files (x86)/Google/Chrome/Application/chrome.exe"
+CHROMEDRIVER_PATH = os.environ.get("CHROMEDRIVER_PATH")
+CHROME_BIN_PATH = os.environ.get("CHROME_BIN_PATH")
 
 class Selenium:
 
@@ -12,16 +13,17 @@ class Selenium:
 
     def setup(self):
         options = Options()
-        options.binary_location = GOOGLE_CHROME_BIN
+        options.binary_location = CHROME_BIN_PATH
         options.add_argument('--disable-gpu')
         options.add_argument('--no-sandbox')
         options.add_argument("--log-level=3")
         options.add_argument("user-agent=" + self.ua.random)
+        option.add_argument('--disable-blink-features=AutomationControlled')
         options.add_experimental_option("excludeSwitches", ["enable-automation"])
         options.add_experimental_option('useAutomationExtension', False)
-        options.headless = True
+        options.headless = False
         self.driver = webdriver.Chrome(executable_path = CHROMEDRIVER_PATH , chrome_options = options)
-        self.driver.execute_script("Object.defineProperty(navigator, 'webdriver', {get: () => undefined})")
+        #self.driver.execute_script("Object.defineProperty(navigator, 'webdriver', {get: () => undefined})")
         return self.driver
 
     def dispose(self):
