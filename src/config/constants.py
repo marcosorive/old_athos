@@ -11,4 +11,4 @@ TIME_BEGIN_PRICE_CHEKING_IN_SECS = 10
 TIME_BETWEEN_PRICE_CHECKS_IN_SECS = 3600
 
 # Once the period of checking prices has begun, this is the wait time between products.
-WAIT_TIME_BETWEEN_PRODUCTS_IN_MS = 1000
+WAIT_TIME_BETWEEN_PRODUCTS_IN_S = 10
